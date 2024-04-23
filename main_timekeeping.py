@@ -32,22 +32,22 @@ class TimeKeepingApp:
         self.window.title(window_title)
         self.window.geometry(window_size)
 
-        # Khởi tạo camera
+        # Initialize camera
         self.camera = cv2.VideoCapture(0)
         
-        # Thông báo
-        self.label = tk.Label(window, text="Chấm công", font=("Arial", 16))
+        # Label title
+        self.label = tk.Label(window, text="TimeKeeping", font=("Arial", 16))
         self.label.place(relx=0.5, rely=0.05, anchor='center')  # Đặt ở giữa trên cùng của cửa sổ
 
         self.label_info = tk.Label(window, text="", font=("Arial", 12))
         self.label_info.place(relx=0.5, rely=0.75, anchor='center')  # Đặt ở giữa dưới cùng của cửa sổ
 
-        # Hiển thị camera
+        # Setting canvas to show camera frame
         self.canvas_width = self.camera.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.canvas_height = self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.aspect_ratio = self.canvas_width / self.canvas_height
         
-        # Resize hình ảnh camera để phù hợp với kích thước 800x800
+        # Resize image that can fit with the window
         if self.canvas_width > 800 or self.canvas_height > 800:
             if self.canvas_width >= self.canvas_height:
                 self.canvas_width = 800
@@ -59,7 +59,7 @@ class TimeKeepingApp:
         self.canvas = tk.Canvas(window, width=self.canvas_width, height=self.canvas_height)
         self.canvas.place(relx=0.5, rely=0.4, anchor='center')  # Đặt ở giữa của cửa sổ
 
-        # Nút bấm
+        # Settings Buttons
         btn_width = 20
         btn_height = 2
 
@@ -81,16 +81,16 @@ class TimeKeepingApp:
         self.btn_register = Button(window, text="Register", width=btn_width, height=btn_height, command=self.show_form_register)
         self.btn_register.place(relx=0.5, rely=0.95, anchor='center')  # Đặt ở giữa dưới
 
-        # Biến kiểm soát camera
+        # Camera control variables
         self.is_camera_running = False
 
         global captured_image
         self.list_faces = []
 
-        # Khởi tạo vòng lặp chạy
+        # Update frame from camera
         self.update()
         
-        # Gọi sự kiện khi đóng cửa số 
+        # Close window event
         self.window.protocol("WM_DELETE_WINDOW", self.on_closing)
 
     def start_camera(self):
@@ -102,7 +102,7 @@ class TimeKeepingApp:
     def capture_image(self):
         global captured_image
         if captured_image.any():
-            # Lưu ảnh
+            # Save image
             image_path = f"captured_images/{uuid.uuid4()}.jpg"
             cv2.imwrite(image_path, captured_image)
             print(f"Saved image to {image_path}")
@@ -139,7 +139,7 @@ class TimeKeepingApp:
         print("Checkin")
         global captured_image
         if captured_image.any():
-            # Kiểm tra thông tin ảnh
+            # Check info person from face image
             id, name, image = ImageHandler().check_info_image(captured_image)
             print("info:", id, name, image.shape)
             if name:
@@ -159,7 +159,7 @@ class TimeKeepingApp:
         print("Checkout")
         global captured_image
         if captured_image.any():
-            # Kiểm tra thông tin ảnh
+            # Check info person from face image
             id, name, image = ImageHandler().check_info_image(captured_image)
             if name:
                 end_time = time.strftime("%Y-%m-%d %H:%M:%S")
@@ -179,7 +179,7 @@ class TimeKeepingApp:
         """
         Convert numpy array image to PIl image and show on window
         """
-        # Chuyển đổi frame cv2 sang PIL
+        # Convert frame with np.ndarray type to PIL Image type
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image = Image.fromarray(image)
         image = ImageTk.PhotoImage(image)

@@ -19,7 +19,7 @@ main_timekeeping.py: Python script containing the main application logic and use
 
 ## Requirements and library
 - python 3.8
-- Install library: pip3 install -requirements.txt
+- Install library: pip3 install -r requirements.txt
 
 ## Usage
 #### Database Setup:
