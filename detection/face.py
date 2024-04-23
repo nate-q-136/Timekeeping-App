@@ -1,17 +1,18 @@
 import cv2     
 from skimage import data
-from skimage.feature import Cascade
 import numpy as np
+import os
 
-# cascade face detection
-trained_file = data.lbp_frontal_face_cascade_filename()
-haar_cascade = cv2.CascadeClassifier("/Volumes/Untitled 2 1/2-PPBL-Cham-Cong/timekeeping_realtime/detection/haarcascade_frontalface_default.xml") 
+# get the full path of current file
+current_path = os.path.dirname(os.path.abspath(__file__))
+print("current_path: ", current_path)
+yunet_filename = "face_detection_yunet_2023mar.onnx"
+yunet_fullpath = os.path.join(current_path, yunet_filename)
 
-face_detector = Cascade(trained_file)
 
-# dnn face detection
+# dnn face detection with Yunet
 yunet = cv2.FaceDetectorYN.create(
-    model="/Volumes/Untitled 2 1/2-PPBL-Cham-Cong/timekeeping_realtime/detection/face_detection_yunet_2023mar.onnx",
+    model=yunet_fullpath,
     config='',
     input_size=(320, 320),
     score_threshold=0.6,
@@ -22,16 +23,12 @@ yunet = cv2.FaceDetectorYN.create(
 )
 
 class FaceDetector:
+    """
+    Detect face in image with Yunet model
+    """
     def __init__(self, image_path, store):
         self.image_path = image_path
         self.store = store
-
-    @staticmethod
-    def detect_v2(image):
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        faces = haar_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=9)
-        # faces = face_detector.detect_multi_scale(image=image, scale_factor=1.2, step_ratio=1, min_size=(50, 50), max_size=(200, 200))
-        return faces
     
     @staticmethod
     def detect_v3(image):
